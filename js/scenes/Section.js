@@ -1,5 +1,6 @@
 import Constants from '../helpers/Constants.js'
 import Screen from '../helpers/Screen.js';
+import GlobalEvents from '../globalevents.js';
 
 class Section extends Phaser.Scene
 {
@@ -11,6 +12,7 @@ class Section extends Phaser.Scene
         });
 
         this.id = name
+        this.globalevents = GlobalEvents.getInstance()
     }
 
     create ({margin = 0, position = Constants.LEFT}){
@@ -52,7 +54,7 @@ class Section extends Phaser.Scene
             x: 0,
             y: 0,
             duration: 1000,
-            ease: "Cubic.easeOut",
+            ease: Constants.easing,
             callbackScope: this,
             onComplete: function(){
             }
@@ -60,6 +62,12 @@ class Section extends Phaser.Scene
     }
 
     moveTo(x, y, callback){
+
+        /*
+        this.view.x = x
+        this.view.y = y
+        //*/
+        //*
         this.tweens.add({
             targets: this.view,
             x: x,
@@ -71,7 +79,7 @@ class Section extends Phaser.Scene
                 callback?.()
             }
         });
-       
+        //*/
     }
 
     scaleImage({type, value, side, img}){
@@ -113,7 +121,7 @@ class Section extends Phaser.Scene
         const imageW = img.displayWidth
         const imageH = img.displayHeight
         
-        console.log(`centerImg imageW:${imageW} imageH:${imageH}`)
+        //console.log(`centerImg imageW:${imageW} imageH:${imageH}`)
         const x = (this.scale.gameSize.width * .5) - (imageW * .5)
         const y = (this.scale.gameSize.height * .5) - (imageH * .5)
 

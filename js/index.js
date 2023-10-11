@@ -22,9 +22,7 @@ const config = {
         }
     },
     scene: [ GameScene, BackgroundScene, Presentation1, Presentation2 ], // , BackgroundScene, Presentation2
-    plugins: {
-        global: [ NineSlice.Plugin.DefaultCfg ],
-    }
+    
 };
 
 const game = new Phaser.Game(config);

@@ -1,7 +1,7 @@
 import BackgroundScene from './BackgroundScene.js';
 import Screen from '../helpers/Screen.js';
 import Constants from '../helpers/Constants.js';
-
+import GlobalEvents from '../globalevents.js';
 
 class GameScene extends Phaser.Scene
 {
@@ -9,7 +9,6 @@ class GameScene extends Phaser.Scene
     {
         super('GameScene');
         
-        console.log(this)
     }
 
     preload ()
@@ -27,6 +26,8 @@ class GameScene extends Phaser.Scene
 
     create ()
     {
+        this.globalevents = GlobalEvents.getInstance()
+        
         this.sections = []
         this.currentNode = undefined
 
@@ -35,9 +36,7 @@ class GameScene extends Phaser.Scene
         this.addSection({
             section:this.presentation1,
             position: Constants.BOTTOM
-
         })
-        this.gotoNode('Presentation1')
         
         this.backgroundScene = this.scene.get('BackgroundScene')
         this.backgroundScene.start(this)        
@@ -57,6 +56,7 @@ class GameScene extends Phaser.Scene
         });
         */
         
+        this.gotoNode('Presentation1')
     }
 
     addSection = ({section, position})=> {
@@ -86,7 +86,7 @@ class GameScene extends Phaser.Scene
             console.log(`move started, currentNode:${this.currentNodeID}`)
             const nodeOutID = this.currentNodeID
             this.move(this.currentNodeID, outPosition.top, outPosition.left, ()=>{
-                //this.events.notify(GlobalEvents.ON_NODE_END_OUT, nodeOutID);
+                this.globalevents.notify(GlobalEvents.ON_NODE_END_OUT, nodeOutID);
             })
             // Actualizamos la posición del actual
             currentNode.setPosition(outPosition.positionResult)
@@ -95,22 +95,25 @@ class GameScene extends Phaser.Scene
         // console.log(`nextNodeID: ${nextNodeID}`)
 
         // Notificamos los inicios: qué nodo se va a ir y qué nodo va a entrar
-        //this.events.notify(GlobalEvents.ON_NODE_START_IN, nextNodeID);
+        
+        this.globalevents.notify(GlobalEvents.ON_NODE_START_IN, nextNodeID);
 
-        //this.events.notify(GlobalEvents.ON_NODE_START_OUT, this.currentNodeID);
+        this.globalevents.notify(GlobalEvents.ON_NODE_START_OUT, this.currentNodeID);
         
         // Movemos al siguiente dentro de la pantalla
         this.move(nextNodeID, 0, 0, ()=>{
-            // this.events.notify(GlobalEvents.ON_NODE_END_IN, this.currentNodeID);
+            this.globalevents.notify(GlobalEvents.ON_NODE_END_IN, this.currentNodeID);
         })
         
         // Actualizamos los valores del current node
         this.currentNodeID = nextNodeID
-        //Nodes.currentNodeID = nextNodeID
+        //Nodes.currentNodeID = nextNodeID // Info general de dónde estamos exactamente
 
         // Enviamos evento de que hemos movido nodos
         
-        //this.events.notify(GlobalEvents.ON_NODE_CHANGE, this.reversePosition(nextNode.getPosition()));
+        console.log(nextNode)
+
+        this.globalevents.notify(GlobalEvents.ON_NODE_CHANGE, this.reversePosition(nextNode.getPosition()));
 
         // Actualizamos la posición del siguiente
         nextNode.setPosition(Constants.CENTER)
@@ -136,6 +139,46 @@ class GameScene extends Phaser.Scene
         var loop = this.sys.game.loop;
     
         this.FPStext.text = `FPS:${loop.actualFps}`;
+    }
+
+    getOutPosition = (positionPush, currentNodeID)=>{
+        let left = 0
+        let top = 0
+        let positionResult = Constants.LEFT
+        let nodeOffset = 0
+        switch(positionPush){
+            case Constants.LEFT:
+                left = this.W + nodeOffset
+                positionResult = Constants.RIGHT
+                break;
+            case Constants.RIGHT:
+                left = -(this.W + nodeOffset)
+                positionResult = Constants.LEFT
+                break;
+            case Constants.TOP:
+                top = this.H + nodeOffset
+                positionResult = Constants.BOTTOM
+                break;
+            case Constants.BOTTOM:
+                top = -(this.H + nodeOffset)
+                positionResult = Constants.TOP                
+                break;
+        }
+
+        return {top, left, positionResult}
+    }
+
+    reversePosition = (currentPosition)=>{
+        switch(currentPosition){
+            case Constants.LEFT:
+                return  Constants.RIGHT
+            case Constants.RIGHT:
+                return  Constants.LEFT
+            case Constants.TOP:
+                return  Constants.BOTTOM
+            case Constants.BOTTOM:
+                return  Constants.TOP
+        }
     }
 
 }
