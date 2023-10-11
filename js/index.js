@@ -3,8 +3,9 @@ import BackgroundScene from './scenes/BackgroundScene.js';
 import Presentation1 from './scenes/Presentation1.js';
 import Presentation2 from './scenes/Presentation2.js';
 
+
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,
     backgroundColor: '#000000',
     scale: {
         mode: Phaser.Scale.RESIZE,
@@ -20,10 +21,14 @@ const config = {
             height: 1200
         }
     },
-    scene: [ GameScene, BackgroundScene, Presentation1, Presentation2 ]
+    scene: [ GameScene, BackgroundScene, Presentation1, Presentation2 ], // , BackgroundScene, Presentation2
+    plugins: {
+        global: [ NineSlice.Plugin.DefaultCfg ],
+    }
 };
 
 const game = new Phaser.Game(config);
+
 
 
 

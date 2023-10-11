@@ -38,10 +38,17 @@
 
     function create ()
     {
+        console.log('Created')
+        this.FPStext = this.add.text(0, 0, "FPS:      ");
     }
 
     function update ()
     {
+        var loop = this.sys.game.loop;
+        console.log('Update loop.actualFps ' + loop.actualFps)
+    
+        this.FPStext = this.add.text(0, 0, loop.actualFps);
+        //this.FPStext.text = loop.actualFps;
     }
 
 </script>

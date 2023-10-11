@@ -71,6 +71,7 @@ class Section extends Phaser.Scene
                 callback?.()
             }
         });
+       
     }
 
     scaleImage({type, value, side, img}){

@@ -17,40 +17,46 @@ class GameScene extends Phaser.Scene
         Screen.H = this.scale.gameSize.height
         Screen.W = this.scale.gameSize.width
         
+        
         this.load.image('splash', 'assets/splash.png');
         this.load.image('perfume', 'assets/perfume.png');
-        this.load.image('star', 'assets/star.png');
+        this.load.image('bgButton', '/assets/buttons/bgButton.png');
         this.load.image('bg', '/assets/background.jpg');
+        this.load.plugin('rexbbcodetextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexbbcodetextplugin.min.js', true);
     }
 
     create ()
     {
         this.sections = []
-        this.backgroundScene = this.scene.get('BackgroundScene')
-        this.backgroundScene.start(this)
-
-        this.presentation1 = this.scene.get('Presentation1')
-
         this.currentNode = undefined
 
+        // SECTIONS
+        this.presentation1 = this.scene.get('Presentation1')
         this.addSection({
             section:this.presentation1,
             position: Constants.BOTTOM
 
         })
-
+        this.gotoNode('Presentation1')
+        
+        this.backgroundScene = this.scene.get('BackgroundScene')
+        this.backgroundScene.start(this)        
+        
         console.log(`w:${this.scale.gameSize.width} h:${this.scale.gameSize.height}`)
 
+        // FPS Text
+        this.FPStext = this.add.text(0, 0, "FPS:");
         // this.add.image(400, 300, 'sky');
         //this.star = this.add.image(400, 300, 'star').setInteractive()
         //this.star.name = "star"
         
+        /*
         this.input.on('gameobjectdown', (pointer, button) =>
         {
             console.log(`button.name:${button.name}`)
         });
-
-        this.gotoNode('Presentation1')
+        */
+        
     }
 
     addSection = ({section, position})=> {
@@ -114,7 +120,7 @@ class GameScene extends Phaser.Scene
     move = (targetID, x, y, callback) =>{
         
         const target = this.getSection(targetID)
-        console.log(`target x:${x} y:${y}`)
+        // console.log(`target x:${x} y:${y}`)
 
         target.moveTo(x, y, callback)
         
@@ -127,7 +133,9 @@ class GameScene extends Phaser.Scene
     
     update ()
     {
-
+        var loop = this.sys.game.loop;
+    
+        this.FPStext.text = `FPS:${loop.actualFps}`;
     }
 
 }
